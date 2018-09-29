@@ -1,7 +1,7 @@
 class jefecita{
-    constructor(codigo, descripccion, tipo, precioCompra, precioVenta, stock){
+    constructor(codigo, descripcion, tipo, precioCompra, precioVenta, stock){
         this.codigo =codigo;
-        this.descripccion = descripccion;
+        this.descripcion = descripcion;
         this.tipo = tipo;
         this.precioCompra = precioCompra;
         this.precioVenta = precioVenta;
@@ -11,6 +11,7 @@ class jefecita{
 }
 function correr(){
     var productosArreglo = [];
+    var ventas = [];
     do{
         var opt =menu();
         switch (opt){
@@ -18,13 +19,16 @@ function correr(){
                 productosArreglo.push(agregarProducto());
                 break;
             case 2:
-                productosArreglo = modificarStock(productosArreglo);
+                let cod= prompt("que producto desea modificar, ingrese su codigo: ");
+                productosArreglo = modificarStock(productosArreglo, cod);
                 break;
             case 3:
-                productosArreglo = Vendido(productosArreglo);
+                let cod1= prompt("que producto desea modificar, ingrese su codigo: ");
+                productosArreglo = Vendido(productosArreglo, cod1);
+                ventas = manejoVentas(ventas,productosArreglo, cod1);
                 break;
             case 4:
-                console.log("nada yet");
+                promedioVentas(ventas);
                 break;
             case 5:
                 stockCero(productosArreglo);
@@ -56,13 +60,15 @@ function agregarProducto(){
     let stock = prompt("Ingresar stock de producto");
 
     var producto = new jefecita(codigo, descripcion, tipo, parseFloat(compra), parseFloat(venta), parseInt(stock, 10));
-
+    console.log("producto registrado en base de datos")
     return producto;
 }
-function modificarStock(productosArreglo){
+function modificarStock(productosArreglo, codigo){
+    var again = "no";
     do{
-        
-        let codigo= prompt("que producto desea modificar, ingrese su codigo: ");
+        if(again === "si"){
+            codigo= prompt("que producto desea modificar, ingrese su codigo: ");
+        }
         for(i=0;i<productosArreglo.length;i++){
             if(productosArreglo[i].codigo == codigo){
                 productosArreglo[i].stock = parseInt(prompt("A que desea cambar el valor de Stock? "));
@@ -70,14 +76,16 @@ function modificarStock(productosArreglo){
                 console.log(productosArreglo[i]);
             }
         }
-        var again= prompt("desea hacer otra accion en este metodo: //si, no")
+        again= prompt("desea hacer otra accion en este metodo: //si, no")
     }while(again!="no");
     return productosArreglo;
 }
-function Vendido(productosArreglo){
+function Vendido(productosArreglo, codigo){
+    var again = "no";
     do{
-        
-        let codigo= prompt("que producto vendio, ingrese su codigo: ");
+        if(again === "si"){
+            codigo= prompt("que producto desea modificar, ingrese su codigo: ");
+        }
         for(i=0;i<productosArreglo.length;i++){
             if(productosArreglo[i].codigo == codigo){
                 productosArreglo[i].stock--;
@@ -85,9 +93,46 @@ function Vendido(productosArreglo){
                 console.log(productosArreglo[i].stock);
             }
         }
-        var again= prompt("desea hacer otra accion en este metodo: //si, no")
+        again= prompt("desea hacer otra accion en este metodo: //si, no")
     }while(again!="no");
     return productosArreglo;
+}
+
+function manejoVentas(ventas, productosArreglo, codigo){
+    var again = "no";
+    do{
+        if(again === "si"){
+            codigo= prompt("que producto desea modificar, ingrese su codigo: ");
+        }
+        for(i=0;i<productosArreglo.length;i++){
+            if(productosArreglo[i].codigo == codigo){
+                var produVenta = new jefecita(productosArreglo[i].descripcion, productosArreglo[i].precioCompra, productosArreglo[i].precioVenta);
+                ventas.push(produVenta);
+                console.log("venta registrada");
+                return ventas;
+            }
+        }
+        again= prompt("desea hacer otra accion en este metodo: //si, no")
+    }while(again!="no");
+    
+}
+function promedioVentas(ventas){
+    var total=0;
+    var cont = 0;
+    var gasto =0;
+    for(i=0;i<ventas.length;i++){
+        total = total + ventas[i].precioVenta;
+        gasto = gasto + ventas[i].precioCompra;
+        cont++;
+    }
+    let profit = total -gasto;
+    console.log("Total de productos vendidos:")
+    console.log(cont)
+    console.log("Total Ventas:")
+    console.log(total);
+    console.log("Net profit:")
+    console.log(profit);
+
 }
 function stockCero(productosArreglo){
     for(i=0;i<productosArreglo.length;i++){
@@ -96,3 +141,4 @@ function stockCero(productosArreglo){
         }
     }
 }
+correr();
